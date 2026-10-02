@@ -25,6 +25,7 @@ pipeline {
                 sh '''
                 test npm
                 echo "test stage"
+                test -f buils/index.html && echo " found index.html exist || echo "html file not found"
 
                 '''
             }
