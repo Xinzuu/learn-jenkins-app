@@ -25,7 +25,7 @@ pipeline {
                 sh '''
                 test npm
                 echo "test stage"
-                test -f build/index.html && echo " found index.html exist || echo "html file not found"
+                test -f build/index.html && echo " found index.html exist" || echo "html file not found"
 
                 '''
             }
