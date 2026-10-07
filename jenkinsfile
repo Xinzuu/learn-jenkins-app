@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment{
+        NETLIFY_SITE_ID= ""
+        NETLIFY_AUTH_TOKEN= ""
+    }
+
     stages {
         stage('Build') {
             agent {
@@ -16,20 +21,39 @@ pipeline {
                 npm --version
                 npm ci
                 npm run build
+                ls -la
+
                '''
             }
         }
         stage('Test'){
+            parallel {
+                stage('unit test'){
+                    agent{
+                        docker{
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
 
-            steps{
-                sh '''
-                test npm
-                echo "test stage"
-                test -f build/index.html && echo " found index.html exist" || echo "html file not found"
-
-                '''
+                }
+                steps{
+                    sh '''
+                        #test -f build/index.html
+                        npm test
+                    '''
+                }
             }
+            
 
         }
     }
+
+    post {
+        always{
+            junit 'jest-result/junit.xml'
+        }
+    }
 }
+
+
